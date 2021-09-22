@@ -11,17 +11,17 @@ const ToDo = () => {
   const settings = useContext(SettingsContext);
 
   useEffect(() => {
-    let incompleteCount = settings.list.filter(item => !item.complete).length;
+    let incompleteCount = settings.list?.filter(item => !item.complete).length;
     settings.setIncomplete(incompleteCount);
     document.title = `To Do List: ${settings.incomplete}`;
-  }, [settings?.list , settings?.incomplete]);
+  }, [settings?.list , settings.incomplete]);
 
   return (
     
    <>
       <Callout interactive={false} elevation={Elevation.TWO}>
         <header>
-          <h3>To Do List: {settings?.incomplete} items pending</h3>
+          <h3>To Do List: {settings?.incomplete} items pending / items render per page: {settings.endIndex} </h3>
         </header>
       </Callout>
 
@@ -48,7 +48,7 @@ const ToDo = () => {
             <InputGroup name="assignee" id="Assignee-Name" placeholder="Assignee Name" onChange={settings.handleChange} />
           </FormGroup >
           <FormGroup
-            // inline={true}
+            inline={true}
             label="difficulty"
             labelFor="item-details"
 
@@ -63,16 +63,39 @@ const ToDo = () => {
               initialValue={3}
               labelStepSize={5}
               onChange={settings.handleChange}
+            
             />
+            {
+              console.log("settings.handleChange",settings.handleChange)
+            }
+             </FormGroup>
+             <FormGroup
+               inline={true}
+             label="items per page"
+             labelFor="items-page">
 
-          </FormGroup>
+             <InputGroup
+              name="itemperpage"
+              id="itemperpage"
+              type='range'
+              placeholder="get items"
+              min={1}
+              max={10}
+              initialValue={3}
+              labelStepSize={5}
+               onChange={settings.handlePaginationChange}
+            />
+            </FormGroup>
+
+         
 
           <Button intent='success' onClick={settings.handleSubmit}>click here</Button>
+          <Button intent='danger' onClick={settings.clearLocalStorage}>clear</Button>
 
         </form>
       </Card>
       <br></br>
-      {settings.pagination().map((item, idx) => (
+      {settings.pagination()?.map((item, idx) => (
         <>
 
 <br></br>
