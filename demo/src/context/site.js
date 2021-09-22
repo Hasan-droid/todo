@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 
 export const SettingsContext=React.createContext();
 
 export default function SettingsProvider(props){
+    const [twitter , setTwitter]=useState('hasan_by');
+    const [title , setTitle]=useState('my site');
     const state={
-        title:'my Site',
-        twitter:'hasan_by',
-        res:"just checking"
+        title,
+        twitter,
+        setTwitter,
+        setTitle
     }
     return(
 
