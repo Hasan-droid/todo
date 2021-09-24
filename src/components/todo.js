@@ -4,11 +4,15 @@ import { FormGroup, InputGroup, Button, Card, Elevation, Callout , Switch } from
 
 import { useContext } from 'react';
 import { SettingsContext } from './context.js';
+import { LoginContext } from './loginProvider/context.js';
 import { v4 as uuid } from 'uuid';
+import { When } from 'react-if';
+import Auth from './auth/auth.js';
 
 const ToDo = () => {
 
   const settings = useContext(SettingsContext);
+  const loginContx=useContext(LoginContext);
 
   useEffect(() => {
     let incompleteCount = settings.list?.filter(item => !item.complete).length;
@@ -19,16 +23,29 @@ const ToDo = () => {
   return (
     
    <>
+    {/* <When condition={!loginContx.loggedIn}>
+     <p>loggedOut</p>
+   </When> */}
+   
+   <When condition={loginContx.loggedIn}>
+     <p>loggedIn</p>
+     
+    
+  
       <Callout interactive={false} elevation={Elevation.TWO}>
+      <Auth capability="read">
+     
+   
         <header>
           <h3>To Do List: {settings?.incomplete} items pending / items render per page: {settings.endIndex} </h3>
         </header>
+        </Auth>
       </Callout>
-
+      <Auth capability="create">
       <Card elevation={3} style={{ width: '35rem', margin: 'auto' }}>
         <form>
 
-
+      
           <FormGroup
             // inline={true}
             helperText="Choose any item you want"
@@ -69,11 +86,13 @@ const ToDo = () => {
               console.log("settings.handleChange",settings.handleChange)
             }
              </FormGroup>
+                   
+            <Auth capability="rend">
              <FormGroup
                inline={true}
              label="items per page"
              labelFor="items-page">
-
+         
              <InputGroup
               name="itemperpage"
               id="itemperpage"
@@ -85,15 +104,21 @@ const ToDo = () => {
               labelStepSize={5}
                onChange={settings.handlePaginationChange}
             />
+           
             </FormGroup>
+            </Auth>
 
          
-
+     
           <Button intent='success' onClick={settings.handleSubmit}>click here</Button>
+          <Auth capability="delete">
           <Button intent='danger' onClick={settings.clearLocalStorage}>clear</Button>
+          </Auth>
+        
 
         </form>
       </Card>
+      </Auth>
       <br></br>
       {settings.pagination()?.map((item, idx) => (
         <>
@@ -104,6 +129,7 @@ const ToDo = () => {
             {
               console.log("item" , item)
             }
+              <Auth capability="read">
             {!item.complete &&
               <>
                 <h5>{item.text}</h5>
@@ -111,8 +137,13 @@ const ToDo = () => {
                 <p><small>Difficulty: {item.difficulty}</small></p>
               </>
             }
+            </Auth>
+            <Auth capability="update">
                   <Switch onClick={() => settings.toggleComplete(idx)}>Complete: {item.complete.toString()}</Switch>
+                  </Auth>
+                  <Auth capability="delete">
             <Button intent='danger' onClick={() => settings.deleteItem(idx)}>X</Button>
+            </Auth>
           </Card>
         </>
 
@@ -120,6 +151,7 @@ const ToDo = () => {
 
       <button onClick={settings.previous}>Previous</button>
       <button onClick={settings.next}>Next</button>
+      </When>
     </>
   );
 };
